@@ -1,21 +1,43 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { FaDumbbell } from 'react-icons/fa'
+import React, { useState, useEffect, useRef } from 'react';
+import { FaDumbbell } from 'react-icons/fa';
 
-import { useAppState } from 'app/app-state'
-import { formatDate, DATE_FORMAT } from 'app/utils'
-import Avatar from 'app/Avatar'
-import Minutes from 'app/Minutes'
-import RecentPostsDropdown from 'app/RecentPostsDropdown'
+import { useAppState } from 'app/app-state';
+import { formatDate, DATE_FORMAT } from 'app/utils';
+import Avatar from 'app/Avatar';
+import Minutes from 'app/Minutes';
+import RecentPostsDropdown from 'app/RecentPostsDropdown';
 
-const MAX_MESSAGE_LENGTH = 200
+const MAX_MESSAGE_LENGTH = 200;
 
 export default function NewPost({ takeFocus, date, onSuccess, showAvatar }) {
-  const [{ auth }] = useAppState()
-  const [message, setMessage] = useState('Ran around the lake.')
-  const messageTooLong = message.length > MAX_MESSAGE_LENGTH
+  const [{ auth }] = useAppState();
+  const [message, setMessage] = useState('Ran around the lake.');
+  const messageTooLong = message.length > MAX_MESSAGE_LENGTH;
+
+  const key = makeNewPostKey(date);
+
+  const messageRef = useRef();
+
+  useEffect(() => {
+    const oldMessage = getLocalStorageValue(key);
+
+    if (oldMessage) {
+      setMessage(oldMessage);
+    }
+  }, [key]);
+
+  useEffect(() => {
+    setLocalStorage(key, message);
+  }, [message, key]);
+
+  useEffect(() => {
+    if (takeFocus && messageRef.current) {
+      messageRef.current.focus();
+    }
+  }, [takeFocus]);
 
   function handleMessageChange(event) {
-    setMessage(event.target.value)
+    setMessage(event.target.value);
   }
 
   return (
@@ -27,6 +49,7 @@ export default function NewPost({ takeFocus, date, onSuccess, showAvatar }) {
           placeholder="Tell us about your workout!"
           value={message}
           onChange={handleMessageChange}
+          ref={messageRef}
         />
         <div className="NewPost_char_count">
           {message.length}/{MAX_MESSAGE_LENGTH}
@@ -42,23 +65,23 @@ export default function NewPost({ takeFocus, date, onSuccess, showAvatar }) {
         </div>
       </form>
     </div>
-  )
+  );
 }
 
 function makeNewPostKey(date) {
-  return `newPost:${formatDate(date, DATE_FORMAT)}`
+  return `newPost:${formatDate(date, DATE_FORMAT)}`;
 }
 
 function getLocalStorageValue(key) {
-  const value = localStorage.getItem(key)
-  if (!value) return null
+  const value = localStorage.getItem(key);
+  if (!value) return null;
   try {
-    return JSON.parse(value)
+    return JSON.parse(value);
   } catch (e) {
-    return null
+    return null;
   }
 }
 
 function setLocalStorage(key, value) {
-  localStorage.setItem(key, JSON.stringify(value))
+  localStorage.setItem(key, JSON.stringify(value));
 }
