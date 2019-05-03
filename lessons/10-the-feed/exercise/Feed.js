@@ -9,9 +9,7 @@ function Feed() {
   const [limit, setLimit] = useState(3);
   const [time, setTime] = useState(Date.now());
   const [posts, setPosts] = useState(null);
-  const [newPosts, setNewPosts] = useState(null);
-
-  console.log(newPosts);
+  const [newPosts, setNewPosts] = useState([]);
 
   useEffect(() => {
     let isCurrent = true;
@@ -27,11 +25,7 @@ function Feed() {
     };
   }, [time, limit]);
 
-  useEffect(() => {
-    return subscribeToNewFeedPosts(time, posts => {
-      setNewPosts(posts);
-    });
-  }, [time]);
+  useEffect(() => subscribeToNewFeedPosts(time, setNewPosts), [time]);
 
   const feedPosts =
     posts && posts.map(post => <FeedPost post={post} key={post.id} />);
@@ -39,9 +33,11 @@ function Feed() {
   return (
     <div className="Feed">
       <div className="Feed_button_wrapper">
-        <button className="Feed_new_posts_button icon_button">
-          View 3 New Posts
-        </button>
+        {newPosts.length > 0 && (
+          <button className="Feed_new_posts_button icon_button">
+            View 3 New Posts
+          </button>
+        )}
       </div>
 
       {feedPosts}
