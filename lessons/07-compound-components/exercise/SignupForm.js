@@ -1,12 +1,12 @@
-import React, { Fragment, useState } from "react"
-import VisuallyHidden from "@reach/visually-hidden"
-import { FaDumbbell } from "react-icons/fa"
+import React, { Fragment, useState } from 'react';
+import VisuallyHidden from '@reach/visually-hidden';
+import { FaDumbbell } from 'react-icons/fa';
 
-import { signup } from "app/utils"
-import TabsButton from "app/TabsButton"
-import DateFields, { MonthField, DayField, YearField } from "app/DateFields"
+import { signup } from 'app/utils';
+import TabsButton from 'app/TabsButton';
+import DateFields, { MonthField, DayField, YearField } from 'app/DateFields';
 
-function TextInput({ id, label, type = "text" }) {
+function TextInput({ id, label, type = 'text' }) {
   return (
     <Fragment>
       <VisuallyHidden>
@@ -14,31 +14,31 @@ function TextInput({ id, label, type = "text" }) {
       </VisuallyHidden>
       <input id={id} placeholder={label} type={type} required />
     </Fragment>
-  )
+  );
 }
 
 export default function SignupForm() {
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [startDate, setStartDate] = useState(new Date("March 1, 2019"))
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [startDate, setStartDate] = useState(new Date('March 1, 2019'));
 
   const handleSignup = async event => {
-    event.preventDefault()
-    setLoading(true)
-    const [displayName, photoURL, email, password] = event.target.elements
+    event.preventDefault();
+    setLoading(true);
+    const [displayName, photoURL, email, password] = event.target.elements;
     try {
       await signup({
         displayName: displayName.value,
         email: email.value,
         password: password.value,
         photoURL: photoURL.value,
-        startDate
-      })
+        startDate,
+      });
     } catch (error) {
-      setLoading(false)
-      setError(error)
+      setLoading(false);
+      setError(error);
     }
-  }
+  };
 
   return (
     <div>
@@ -57,19 +57,18 @@ export default function SignupForm() {
         <TextInput id="email" label="Email" />
         <TextInput id="password" label="Password" />
         <p>
-          <span>Start:</span>{" "}
-          <DateFields
-            value={startDate}
-            onChange={setStartDate}
-            start={2018}
-            end={2019}
-          />
+          <span>Start:</span>{' '}
+          <DateFields value={startDate} onChange={setStartDate}>
+            <MonthField aria-label="Start Month" /> /
+            <DayField aria-label="Start Day" /> /
+            <YearField start={2018} end={2020} aria-label="Start year" />
+          </DateFields>
         </p>
         <TabsButton>
           <FaDumbbell />
-          <span>{loading ? "Loading..." : "Sign Up"}</span>
+          <span>{loading ? 'Loading...' : 'Sign Up'}</span>
         </TabsButton>
       </form>
     </div>
-  )
+  );
 }

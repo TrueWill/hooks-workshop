@@ -1,57 +1,55 @@
-import React, { Fragment, useContext, createContext } from "react"
+import React, { useContext, createContext } from 'react';
 
-import { daysInMonth } from "app/utils"
+import { daysInMonth } from 'app/utils';
+
+const DateContext = createContext();
 
 export default function DateFields({
   children,
   defaultValue,
-  start,
-  end,
   value: controlledValue,
-  onChange
+  onChange,
 }) {
-  const date = controlledValue || defaultValue
+  const date = controlledValue || defaultValue;
   return (
-    <Fragment>
-      <MonthField date={date} onChange={onChange} />/
-      <DayField date={date} onChange={onChange} />/
-      <YearField date={date} onChange={onChange} start={start} end={end} />
-    </Fragment>
-  )
+    <DateContext.Provider value={{ date, onChange }}>
+      {children}
+    </DateContext.Provider>
+  );
 }
 
 export function DayField(props) {
-  const { date, onChange } = props
-  const month = date.getMonth()
-  const year = date.getFullYear()
-  const days = Array.from({ length: daysInMonth(month, year) })
-  const value = date.getDate()
+  const { date, onChange } = useContext(DateContext);
+  const month = date.getMonth();
+  const year = date.getFullYear();
+  const days = Array.from({ length: daysInMonth(month, year) });
+  const value = date.getDate();
   const handleChange = event => {
-    const newDate = new Date(date.getTime())
-    newDate.setDate(parseInt(event.target.value))
-    onChange(newDate)
-  }
+    const newDate = new Date(date.getTime());
+    newDate.setDate(parseInt(event.target.value));
+    onChange(newDate);
+  };
 
   return (
     <select value={value} onChange={handleChange}>
       {days.map((_, index) => (
         <option key={index} value={index + 1}>
-          {index < 9 ? "0" : ""}
+          {index < 9 ? '0' : ''}
           {index + 1}
         </option>
       ))}
     </select>
-  )
+  );
 }
 
 export function MonthField(props) {
-  const { date, onChange } = props
-  const month = date.getMonth()
+  const { date, onChange } = useContext(DateContext);
+  const month = date.getMonth();
   const handleChange = event => {
-    const newDate = new Date(date.getTime())
-    newDate.setMonth(parseInt(event.target.value))
-    onChange(newDate)
-  }
+    const newDate = new Date(date.getTime());
+    newDate.setMonth(parseInt(event.target.value));
+    onChange(newDate);
+  };
 
   return (
     <select value={month} onChange={handleChange}>
@@ -68,20 +66,21 @@ export function MonthField(props) {
       <option value="10">11</option>
       <option value="11">12</option>
     </select>
-  )
+  );
 }
 
 export function YearField(props) {
-  const { date, onChange, start, end } = props
-  const difference = end - start + 1
+  const { start, end } = props;
+  const { date, onChange } = useContext(DateContext);
+  const difference = end - start + 1;
   const years = Array.from({ length: difference }).map(
     (_, index) => index + start
-  )
+  );
   const handleChange = event => {
-    const newDate = new Date(date.getTime())
-    newDate.setYear(parseInt(event.target.value), 1)
-    onChange(newDate)
-  }
+    const newDate = new Date(date.getTime());
+    newDate.setYear(parseInt(event.target.value), 1);
+    onChange(newDate);
+  };
 
   return (
     <select value={date.getFullYear()} onChange={handleChange}>
@@ -89,5 +88,5 @@ export function YearField(props) {
         <option key={year}>{year}</option>
       ))}
     </select>
-  )
+  );
 }
