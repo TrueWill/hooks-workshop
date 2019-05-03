@@ -24,11 +24,8 @@ function Feed() {
     };
   }, [time, limit]);
 
-  if (!posts) {
-    return null;
-  }
-
-  const feedPosts = posts.map(post => <FeedPost post={post} key={post.id} />);
+  const feedPosts =
+    posts && posts.map(post => <FeedPost post={post} key={post.id} />);
 
   return (
     <div className="Feed">
@@ -41,7 +38,14 @@ function Feed() {
       {feedPosts}
 
       <div className="Feed_button_wrapper">
-        <button className="Feed_new_posts_button icon_button">View More</button>
+        <button
+          className="Feed_new_posts_button icon_button"
+          onClick={() => {
+            setLimit(limit + 3);
+          }}
+        >
+          View More
+        </button>
       </div>
     </div>
   );
