@@ -13,6 +13,8 @@ export default function LoggedIn() {
   const [{ auth, user }, dispatch] = useAppState();
 
   useEffect(() => {
+    // Note: Could bypass fetch if already have user in state.
+    // Also want a cleanup function - can use a local isCurrent and close over that.
     fetchUser(auth.uid).then(user => {
       dispatch({ type: 'LOGIN_SUCCESS', user });
     }); // not handling errors currently
