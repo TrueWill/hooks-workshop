@@ -27,6 +27,11 @@ function Feed() {
 
   useEffect(() => subscribeToNewFeedPosts(time, setNewPosts), [time]);
 
+  const handleViewNewClick = () => {
+    setLimit(limit + newPosts.length);
+    setTime(Date.now());
+  };
+
   const feedPosts =
     posts && posts.map(post => <FeedPost post={post} key={post.id} />);
 
@@ -34,8 +39,11 @@ function Feed() {
     <div className="Feed">
       <div className="Feed_button_wrapper">
         {newPosts.length > 0 && (
-          <button className="Feed_new_posts_button icon_button">
-            View 3 New Posts
+          <button
+            className="Feed_new_posts_button icon_button"
+            onClick={handleViewNewClick}
+          >
+            View {newPosts.length} New Posts
           </button>
         )}
       </div>
